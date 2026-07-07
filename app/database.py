@@ -18,7 +18,7 @@ def get_database_url():
         return database_url
 
     return (
-        'postgresql+psycopg2://postgres:postgres@localhost:5432/'
+        'postgresql+psycopg2://panneau_user:panneau_pass@localhost:5432/'
         'PanneauSolaireDB'
     )
 
