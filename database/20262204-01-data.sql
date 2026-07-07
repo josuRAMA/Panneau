@@ -1,31 +1,27 @@
--- Insertion groupée des tranches horaires
+-- PostgreSQL data insert script
+-- Connect to the target database before running this script.
+-- Example: psql -h localhost -U postgres -d PanneauSolaireDB -f 20262204-01-data.sql
+
 INSERT INTO TrancheHeure (libelle, heure_debut, heure_fin)
-VALUES 
-    (N'maraina', '06:00:00', '17:00:00'),
-    (N'hariva', '17:00:00', '19:00:00'),
-    (N'alina',   '19:00:00', '06:00:00');
-GO
+VALUES
+    ('maraina', '06:00:00', '17:00:00'),
+    ('hariva', '17:00:00', '19:00:00'),
+    ('alina', '19:00:00', '06:00:00');
 
 INSERT INTO modelePanneau (nom)
-VALUES (N'Modele A'), (N'Modele B')
-GO;
-
+VALUES ('Modele A'), ('Modele B');
 
 INSERT INTO ConfigurationPanneauByTranche (id_tranche_heure, pourcentage_ensoleillement, modele_id)
 VALUES
-    (3, 50.0, 3), -- Alina pour Modele A
-    (3, 40.0, 3); -- Alina pour Modele B
-    (3, 0, 3)
-GO
+    (3, 50.0, 1),
+    (3, 40.0, 2),
+    (3, 0.0, 1);
 
-
-insert into
-
-INSERT INTO ConfigurationHeurePoint(modele_id, heure_debut, heure_fin,
-pourcentage_ouvrable,pourcentage_non_ouvrable) VALUES
-(3, '12:00:00', '14:00:00', 50, 0);
-(3, '17:00:00', '19:00:00', 50, 40)
-
-INSERT INTO ConfigurationPrixPanneau(modele_id, prix_jour_ouvrable, prix_jour_non_ouvrable)
+INSERT INTO ConfigurationHeurePoint (modele_id, heure_debut, heure_fin, pourcentage_ouvrable, pourcentage_non_ouvrable)
 VALUES
-(3, 190,210);
+    (1, '12:00:00', '14:00:00', 50, 0),
+    (1, '17:00:00', '19:00:00', 50, 40);
+
+INSERT INTO ConfigurationPrixPanneau (modele_id, prix_jour_ouvrable, prix_jour_non_ouvrable)
+VALUES
+    (1, 190, 210);

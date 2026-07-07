@@ -1,3 +1,4 @@
+import os
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine
@@ -10,11 +11,16 @@ _SessionLocal = None
 
 
 def get_database_url():
-    URL = (
-        'mssql+pyodbc://sa:Sqlserver123!@localhost:1433/'
-        'PanneauSolaireDB?driver=ODBC+Driver+17+for+SQL+Server'
+    database_url = (
+        os.getenv('PANNEAU_DATABASE_URL') or os.getenv('DATABASE_URL')
     )
-    return URL
+    if database_url:
+        return database_url
+
+    return (
+        'postgresql+psycopg2://postgres:postgres@localhost:5432/'
+        'PanneauSolaireDB'
+    )
 
 
 def get_engine():

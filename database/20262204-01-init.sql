@@ -1,56 +1,38 @@
-IF DB_ID(N'PanneauSolaireDB') IS NULL
-BEGIN
-    CREATE DATABASE PanneauSolaireDB;
-END
-GO
+-- PostgreSQL initialization script
+-- Connect to the target database before running this script.
+-- Example: psql -h localhost -U postgres -d PanneauSolaireDB -f 20262204-01-init.sql
 
-CREATE TABLE modelePanneau (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    nom NVARCHAR(100) NOT NULL
+CREATE TABLE IF NOT EXISTS modelePanneau (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL
 );
-GO
 
-CREATE TABLE TrancheHeure (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    libelle NVARCHAR(120) NOT NULL,
-    heure_debut TIME(0) NOT NULL,
-    heure_fin TIME(0) NOT NULL
+CREATE TABLE IF NOT EXISTS TrancheHeure (
+    id SERIAL PRIMARY KEY,
+    libelle VARCHAR(120) NOT NULL,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL
 );
-GO
 
-CREATE TABLE ConfigurationPanneauByTranche(
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    id_tranche_heure INT NOT NULL,
-    pourcentage_ensoleillement FLOAT NOT NULL,
-    FOREIGN KEY (id_tranche_heure) REFERENCES TrancheHeure(id)
+CREATE TABLE IF NOT EXISTS ConfigurationPanneauByTranche (
+    id SERIAL PRIMARY KEY,
+    id_tranche_heure INTEGER NOT NULL REFERENCES TrancheHeure(id),
+    pourcentage_ensoleillement REAL NOT NULL,
+    modele_id INTEGER NOT NULL REFERENCES modelePanneau(id)
 );
-GO
 
-ALTER TABLE ConfigurationPanneauByTranche ADD modele_id INT NOT NULL;
-
-ALTER TABLE ConfigurationPanneauByTranche ADD CONSTRAINT Fk_Configuration_Modele 
-FOREIGN KEY (modele_id) REFERENCES modelePanneau(id);
-
-CREATE TABLE ConfigurationPrixPanneau(
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    modele_id INT NOT NULL,
-    prix_jour_ouvrable INT DEFAULT 0,
-    prix_jour_non_ouvrable INT DEFAULT 0,
-    FOREIGN KEY (modele_id) REFERENCES modelePanneau(id)
+CREATE TABLE IF NOT EXISTS ConfigurationPrixPanneau (
+    id SERIAL PRIMARY KEY,
+    modele_id INTEGER NOT NULL REFERENCES modelePanneau(id),
+    prix_jour_ouvrable INTEGER NOT NULL DEFAULT 0,
+    prix_jour_non_ouvrable INTEGER NOT NULL DEFAULT 0
 );
-GO
 
-CREATE TABLE ConfigurationHeurePoint(
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    modele_id INT NOT NULL,
-    heure_debut TIME(0) NOT NULL,
-    heure_fin TIME(0) NOT NULL,
-    pourcentage_ouvrable INT NOT NULL DEFAULT 0,
-    pourcentage_non_ouvrable iNT NOT NULL DEFAULT 0,
-    FOREIGN KEY (modele_id) REFERENCES  modelePanneau(id)
+CREATE TABLE IF NOT EXISTS ConfigurationHeurePoint (
+    id SERIAL PRIMARY KEY,
+    modele_id INTEGER NOT NULL REFERENCES modelePanneau(id),
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL,
+    pourcentage_ouvrable INTEGER NOT NULL DEFAULT 0,
+    pourcentage_non_ouvrable INTEGER NOT NULL DEFAULT 0
 );
-GO
-
-DELETE FROM ConfigurationHeurePoint;
-
-DELETE FROM ConfigurationPanneauByTranche WHERE modele_id = 3
